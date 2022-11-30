@@ -1,0 +1,506 @@
+.weatherContainer{
+    backdrop-filter: blur(25px) saturate(0.5);
+    margin: 0;
+    padding: 0 48px;
+    min-height: 100vh;
+    width: 800px;
+    background-color: rgba(255,255,255,0.05);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.33);
+}
+
+.locate{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    --size: 50px;
+    font-size: 1.5rem;
+    background-color: transparent;
+    border: 1px solid #888;
+    border-radius: 16px;
+    width: var(--size);
+    height: var(--size);
+    overflow: hidden;
+}
+.locate:hover p{
+    animation: locateAnim 1s forwards
+}
+@keyframes locateAnim {
+    from {transform: translateY(-50px) translateX(-10px) rotate(-10deg);}
+    20% {transform: translateY(0) translateX(-2px) rotate(-10deg);}
+    25% {transform: translateX(1px) rotate(5deg);}
+    32% {transform: translateX(-1px) rotate(-6deg);}
+    40% {transform: translateX(0px) rotate(2deg);}
+    50% {transform: none;}
+    to{transform: none;}
+}
+
+.favContainer{
+    margin-top: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    transition: opacity 0.2s;
+}
+.favContainer h1{
+    --size: 37px;
+    width: var(--size);
+    height: var(--size);
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 100;
+    margin: 0;
+    border-radius: 32px;
+    border: 1px solid rgb(221, 221, 127);
+    background-color: rgba(250, 212, 109, 0.15);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
+    cursor: default;
+}
+.favorites{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px;
+}
+.favorites button{
+    background-color: rgb(255, 236, 115);
+    color: #333;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-width: 2px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
+    animation: favIn 0.33s
+}
+@keyframes favIn {
+    from{scale: 0.2;}
+    to {scale: 1}
+}
+.favorites button:hover{
+    border-width: 2px;
+}
+.favorites button p{
+    margin: 0;
+}
+
+
+.search{
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+.searching{
+    position: relative;
+    flex-grow: 1;
+}
+.startSearch{
+    position: absolute;
+    right: 0;
+    z-index: 2;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: transparent;
+}
+.startSearch p{
+    font-size: 1.4rem;
+    filter: 
+        saturate(0) 
+        contrast(1.5);
+    transition: 0.2s;
+}
+.startSearch:hover p{
+    transform: 
+        translateX(-8px)
+        rotate(30deg)
+        scale(1.65);
+}
+.recomendation{
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    left: -1px;
+    top: 50%;
+    width: 100%;
+    min-height: 10px;
+    z-index: 1;
+    background-color: #ddd;
+    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: 16px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
+    border: 1px solid #333;
+    border-top-width: 0;
+    color: #333;
+    padding: 0;
+    padding-top: 30px;
+    list-style-type: none;
+    overflow: hidden;
+}
+.recomendation_active{
+    opacity: 1;
+    pointer-events: all;
+}
+.recomendation button{
+    border-radius: 0;
+    background-color: transparent;
+    color: #333;
+    text-align: left;
+    border: none;
+    transition: background-color 0.075s;
+}
+.recomendation button:hover{
+    background-color: rgba(0, 136, 255,0.5);
+    border: none;
+}
+
+.search input{
+    width: calc(100% - 30px);
+    position: absolute;
+    z-index: 2;
+    border-radius: 32px;
+    border: none;
+    outline: 1px solid #555;
+    padding: 0 15px;
+    height: 100%;
+    transition: font-size 0.2s;
+}
+.search input:focus{
+    font-size: 1.125rem;
+}
+
+.main{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    border-radius: 32px;
+    /*backdrop-filter: blur(12px);*/
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
+    border: 1px solid #ddd;
+}
+
+
+.clouds{
+    margin-top: 20px;
+    flex-direction: column;
+    gap: 0;
+}
+.clouds img{
+    margin: -30px;
+    height: 200px;
+    /*filter: drop-shadow(0 0 40px white)*/
+}
+.cloudInfo{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+}
+.cloudInfo h2{
+    margin: 0;
+    font-weight: 100;
+}
+.cloudInfo p{
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+.nextDays{
+    margin-top: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 100%;
+}
+.nextDays h1{
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+.nextDays h2{
+    font-size: 1.25rem;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+.forecastList{
+    display: flex;
+    align-items: flex-end;
+    max-width: 100%;
+    gap: 30px;
+    overflow-x: auto;
+}
+.forecastItem{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.forecastList img{
+    width: 100px;
+    margin: -10px;
+}
+.forecastItem p{
+    margin: 0;
+}
+.followingDay{
+    color: #bbb;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    padding: 5px 10px;
+}
+
+
+.heading{
+    margin-top: 25px;
+}
+
+.muted{
+    color: #bbb
+}
+
+.cityDate{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    align-items: flex-start;
+    height: fit-content;
+}
+.cityDate h1{
+    margin: 0;
+    font-weight: 100;
+}
+.cityDate h2{
+    margin: 0;
+    margin-bottom: 5px;
+    color: #ccc
+}
+.cityDate p{
+    margin: 0;
+    color: #ccc
+}
+.temp{
+    display: flex;
+    font-size: 6rem;
+    font-weight: 100;
+    margin: 0;
+}
+
+.clockFavo{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+}
+.favo{
+    --size: 30px;
+    width: var(--size);
+    height: var(--size);
+    background-color: transparent;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #666;
+    transition: 0.15s;
+}
+.star_active{
+    transform: translateY(-1px);
+    font-size: 1.125rem;
+    filter: none;
+    opacity: 1
+}
+.favo:hover{
+    background-color: rgba(255,255,255,0.25)
+}
+.star_inactive{
+    transform: translateY(-1px);
+    font-size: 1.125rem;
+    opacity: 0.65;
+    filter: saturate(0) contrast(2)
+}
+
+.refreshContainer{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.refresh{
+    --size: 30px;
+    width: var(--size);
+    height: var(--size);
+    background-color: transparent;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #666;
+    transition: 0.15s;
+}
+.refresh:hover{
+    background-color: rgba(255,255,255,0.25);
+}
+.refresh:hover p{
+    color: #222;
+    rotate: -360deg
+}
+.refresh p{
+    font-size: 1.5rem;
+    transform: translateY(-2.75px) translateX(-0.65px);
+    transition: all 0.2s, rotate 1s;
+}
+
+.details{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    column-gap: 25px;
+    row-gap: 25px;
+    margin-top: 50px;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
+    padding: 10px;
+    border-radius: 32px;
+    /*border: 1px solid #888;*/
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
+}
+.detailItem{
+    background-color: rgba(255,255,255,0.65);
+    padding: 16px;
+    border-radius: 26px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.125);
+    border: 1px solid #555;
+}
+.detailItem h1{
+    font-size: 1rem;
+    font-weight: 100;
+    color: #444;
+    /*filter: saturate(0) contrast(1.5)*/
+}
+.detailItem p{
+    display: flex;
+    align-items: center;
+    font-size: 3rem;
+    color: #222
+}
+
+
+.allInfoContainer{
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 32px;
+    border: 1px solid #aaa;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
+    width: 50%;
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.33s;
+    text-align: center;
+}
+.w-100{
+    width: calc(100% - 20px);
+}
+.allInfoContainer h1{
+    font-size: 1.5rem;
+}
+.allInfoContainer button{
+    width: 100%;
+    background-color: transparent;
+    opacity: 0.33;
+    border: none;
+    transition: opacity 0.2s;
+}
+.allInfoContainer button:hover{
+    opacity: 1;
+    border: none;
+}
+
+.footer{
+    gap: 0;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+.copies{
+    display: flex;
+    width: 100%;
+}
+.copyContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: center;
+    width: 50%;
+}
+
+@media screen and (max-width: 896px) {
+    .weatherContainer{
+        backdrop-filter: none;
+        background-color: transparent;
+        z-index: 10;
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: none;
+        overflow: hidden;
+        padding: 0 7px
+    }
+    .main{
+        backdrop-filter: blur(40px);
+        flex-direction: column;
+        min-width: 50vw;
+        max-width: calc(100% - 32px);
+    }
+    .heading{
+        text-align: center;
+    }
+    .nextDays{
+        width: calc(100% - 32px);
+        max-width: none;
+    }
+    .search{
+        flex-direction: row;
+        width: 90vw
+    }
+    .favContainer{
+        width: 90vw;
+    }
+    .details{
+        width: calc(100% - 20px);
+        grid-template-columns: auto auto;
+    }
+    .cityDate{
+        align-items: center;
+    }
+    .clockFavo{
+        justify-content: center;
+    }
+    .locate{
+        background-color: #333;
+    }
+    .footer{
+        width: calc(100% - 32px);
+    }
+    .clockFavo{
+        justify-content: space-between;
+    }
+    .refreshContainer{
+        flex-direction: row-reverse;
+    }
+}
