@@ -1,5 +1,5 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Filler from "./Filler"
 import "./styles/Dashboard.css"
 import api from "./api.json"
@@ -144,14 +144,25 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
         {name:"Hamburg", lon: 53.550556, lat: 9.993333}, 
         {name: "Amsterdam", lon: 52.370197, lat: 4.890444}])
     const [isfav, setIsFav] = useState(false)
-    const [search, setSearch] = useState("")
     const [searchavail, setSearchavail] = useState(false)
-    const [lastsearch, setLastsearch] = useState("")
+
+    const searchField = useRef<HTMLInputElement>()
+    const lastSearch = useRef("")
 
     const owID = api.key
 
-    const searchbar = document.getElementById("searchbar")
+    const search_recom = document.getElementById("search_recom")
 
+    //click outside searchfield to hide results
+    useEffect(() => {
+        const clickListener = document.addEventListener("click", e => {
+            if(e.target !== searchField.current){
+                search_recom?.classList.remove("recomendation_active")
+            } else {
+                search_recom?.classList.add("recomendation_active")
+            }
+        })
+    }, [])
 
     useEffect(() => {
         if(pos !== undefined){
@@ -173,8 +184,8 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 }})
             .then(response => setFivedays(response.data))
             .catch(err => setError(err))
-            console.log(weather)
-            console.log(fivedays)
+            //console.log(weather)
+            //console.log(fivedays)
         }
     }
     , [pos])
@@ -185,7 +196,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             setClouds(weather?.clouds.all)
             setVisibility(weather?.visibility)
             setMain(weather?.weather[0].main)
-            console.log(isfav)
+            //console.log(isfav)
             const sunset = new Date(weather?.sys.sunset*1000)
             const sunsetHours = sunset.getUTCHours().toString()
             const sunsetMinutes = sunset.getUTCMinutes().toString().padStart(2, "0")
@@ -197,33 +208,25 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
         }
     }, [weather])
 
-    useEffect(() => {
-        if(search.length === 1 || (searchavail && Math.abs(search.length - lastsearch.length) >= 2) || searchavail){
-            queueRequest()
-        }
-        if(search.length === 0){
-            setRecom(undefined)
-        }
-    }, [search])
-
-
-
     const queueRequest = () => {
-        requestLocs()
-        setLastsearch(search)
-        setSearchavail(false)
-        setTimeout(() => {
-            setSearchavail(true)
-            if(search.length !== lastsearch.length){
-                queueRequest()
-            }
-        }, 2000)
+        if(searchField.current){
+            requestLocs()
+            lastSearch.current = searchField.current.value
+            setSearchavail(false)
+            setTimeout(() => {
+                setSearchavail(true)
+                if(searchField.current?.value.length !== lastSearch.current.length && searchField.current.value.length > 0){
+                    queueRequest()
+                    //console.log(searchField.current?.value.length, lastSearch.current?.length)
+                }
+            }, 2000)
+        }
     }
 
     const getLocation = () => {
         if(navigator.geolocation){
             const geo = navigator.geolocation.getCurrentPosition(setLocation)
-            console.log(geo)
+            //console.log(geo)
         }
     }
 
@@ -244,25 +247,26 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
     }
 
     const changePos = (lon:number, lat:number, fromSearch: boolean) => {
-        if(fromSearch){
-            setSearch("")
+        if(fromSearch && searchField.current){
+            searchField.current.value = ""
+            setRecom(undefined)
         }
-        console.log([lon, lat])
+        //console.log([lon, lat])
         updateTime()
         setPos([lon, lat])
     }
 
     const requestLocs = () => {
+        //console.log("request")
         axios.get("http://api.openweathermap.org/geo/1.0/direct", {
             params: {
-                q: (searchbar as HTMLInputElement).value,
+                q: searchField.current?.value,
                 limit: 5,
                 appid: owID
             }
         })
         .then(response => setRecom(response.data))
         .catch(error => console.log(error))
-        console.log(recom)
     }
 
     const makeFavorite = () => {
@@ -278,8 +282,16 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
         }
     }
 
-    const updateSearch = (e) => {
-        setSearch(e.target.value)
+    const updateSearch = () => {
+        if(searchField.current){
+            const search = searchField.current.value
+            if(search.length === 1 || (searchavail && search.length > 0) || (searchavail && Math.abs(search.length - lastSearch.current.length) >= 2 && search.length > 0)){
+                queueRequest()
+            }
+            if(search.length === 0){
+                setRecom(undefined)
+            }
+        }
     }
 
 
@@ -289,11 +301,11 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             <p>{error}</p>
             <div className="search">
                 <div className="searching">
-                    <input placeholder="Ort suchen..." id="searchbar" onChange={updateSearch} value={search} />
+                    <input ref={searchField} placeholder="Ort suchen..." id="searchbar" onChange={updateSearch} />
                     {/*<button className="startSearch" onClick={requestLocs}>
                         <p>🔎</p>
                     </button>*/}
-                    <div className={`recomendation ${recom? "recomendation_active" : ""}`}>
+                    <div id="search_recom" className="recomendation">
                         {recom &&
                             recom.map(item => <button onClick={() => changePos(item.lat, item.lon, true)}>{`${item.name} (${item.country}${item.state? `, ${item.state}` : ""})`}</button>
                             )
@@ -406,7 +418,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             </div>
             {weather?
             <div className={all? "allInfoContainer w-100" : "allInfoContainer"}>
-                <button onClick={openInfo}>{all? "Informationen einklappen ▲" : "Zeige alle Informationen ▼"}</button>
+                <button onClick={openInfo}>{all? "Informationen einklappen ▲" : "Alle Informationen zum aktuellen Wetter ▼"}</button>
                 {all &&
                     <div>
                         <h1>Bereitgestellt von OpenWeather</h1>
@@ -464,13 +476,26 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 <div className="copies">
                     <div className="copyContainer">
                         <p>☀ Wetter</p>
-                        <p>Daten bereitgestellt von OpenWeather</p>
+                        <span>Daten bereitgestellt von</span>
+                        <a href="https://openweathermap.org/" target="_blank">
+                            OpenWeather
+                            <img src="images/newWindow_light.svg" />
+                        </a>
                     </div>
                     <div className="copyContainer">
                         <p>🖼 Bilder</p>
-                        <p>Aleksandar Ristov</p>
-                        <p>Stefan Widua</p>
-                        <p>Textures.com</p>
+                        <a href="https://unsplash.com/@aleksandarr09" target="_blank">
+                            Aleksandar Ristov
+                            <img src="images/newWindow_light.svg" />
+                        </a>
+                        <a href="https://unsplash.com/@stewi" target="_blank">
+                            Stefan Widua
+                            <img src="images/newWindow_light.svg" />
+                        </a>
+                        <a href="https://www.textures.com/" target="_blank">
+                            Textures.com
+                            <img src="images/newWindow_light.svg" />
+                        </a>
                     </div>
                 </div>
                 

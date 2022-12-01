@@ -57,6 +57,41 @@
     animation: cloudAnim 90s linear infinite;
 }
 
+.snowVis{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-image: url("images/snow.png");
+    background-size: 12.5%;
+    animation: rainAnim 8s linear infinite;
+}
+.snowVis::after{
+    content: '';
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("images/snow.png");
+    background-size: 6.25%;
+    background-position-x: 25%;
+    animation: rainAnim 12s linear infinite;
+    opacity: 0.65;
+}
+.snowVis::before{
+    content: '';
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("images/snow.png");
+    background-size: 3.125%;
+    background-position-x: 50%;
+    animation: rainAnim 26s linear infinite;
+    opacity: 0.4;
+}
+
 .rainVis{
     position: fixed;
     width: 100%;
@@ -144,6 +179,16 @@
         top: 0;
         background-size: 25%;
         animation-duration: 1.75s;
+    }
+    .snowVis{
+        background-size: 50%;
+        top: 0;
+    }
+    .snowVis::after{
+        background-size: 25%;
+    }
+    .snowVis::before{
+        background-size: 12.25%;
     }
     .rainVis::before,
     .rainVis::after{

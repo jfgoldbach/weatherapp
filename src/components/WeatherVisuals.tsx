@@ -17,9 +17,10 @@ function WeatherVisuals({clouds, visibility, main, night}:visualsProps) {
     const mist = 1-(visibility/10000)
     const conditions = {
         "none": [0,0],
-        "Drizzle": [0.25, 0.15], //opacity, speed
+        "Drizzle": [0.25, 0.15], //day opacity, night opacity
         "Rain": [0.75, 0.4],
-        "Thunderstorm": [1, 0.65]
+        "Thunderstorm": [1, 0.65],
+        "Snow": [1, 0.8]
       }
     const foundCondition = Object.keys(conditions).filter(i => i === main)
     const color = isnight? "25" : "255"
@@ -27,7 +28,7 @@ function WeatherVisuals({clouds, visibility, main, night}:visualsProps) {
     useEffect(() => {
         if(night){
             const date = new Date()
-            if(date.getHours() >= night.set || date.getHours() < night.rise){
+            if(date.getHours() > night.set || date.getHours() < night.rise){
                 setIsnight(true)
             }else {
                 setIsnight(false)
@@ -41,7 +42,8 @@ function WeatherVisuals({clouds, visibility, main, night}:visualsProps) {
     return(
         <div className={isnight? "background background_night" : "background"}>
             <div style={{opacity: clouds/100}} className={isnight? "cloudVis cloudVis_night" : "cloudVis"} />
-            <div style={{opacity: conditions[foundCondition.length !== 0? main : "none"][isnight? 1 : 0]}} className={isnight? "rainVis rainVis_night" : "rainVis"} />
+            <div style={{opacity: conditions[foundCondition.length !== 0? main : "none"][isnight? 1 : 0]}} 
+                className={isnight? (main === "Snow" ? "snowVis" : "rainVis rainVis_night")  :  (main === "Snow" ? "snowVis" : "rainVis")} />
             <div 
                 style={{
                     opacity: mist*1.5,

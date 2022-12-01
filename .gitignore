@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 
+public/images
+
 api.json
 
 # Editor directories and files

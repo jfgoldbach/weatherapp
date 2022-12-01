@@ -7,7 +7,7 @@ function App() {
   const [clouds, setClouds] = useState(40)
   const [visibility, setVisibility] = useState(7500)
   const [main, setMain] = useState("")
-  const [night, setNight] = useState({"rise": 6, "set": 20})
+  const [night, setNight] = useState({"rise": 6, "set": 19})
 
 
   return (

@@ -148,6 +148,7 @@
     padding-top: 30px;
     list-style-type: none;
     overflow: hidden;
+    transition: opacity 0.2s;
 }
 .recomendation_active{
     opacity: 1;
@@ -351,17 +352,19 @@
     border: 1px solid #666;
     transition: 0.15s;
 }
+.refresh p{
+    font-size: 1.33rem;
+    background-color: green;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+    line-height: 0;
+    flex-grow: 1;
+    transition: 0.2s;
+}
 .refresh:hover{
     background-color: rgba(255,255,255,0.25);
-}
-.refresh:hover p{
-    color: #222;
-    rotate: -360deg
-}
-.refresh p{
-    font-size: 1.5rem;
-    transform: translateY(-2.75px) translateX(-0.65px);
-    transition: all 0.2s, rotate 1s;
 }
 
 .details{
@@ -438,6 +441,21 @@
 .copies{
     display: flex;
     width: 100%;
+}
+.copies a{
+    color: #ddd;
+}
+.copies a img{
+    width: 13px;
+    margin-left: 7px;
+    opacity: 0.33;
+}
+.copies a:hover{
+    color: white;
+    text-decoration: underline;
+}
+.copies a:hover img{
+    opacity: 0.8;
 }
 .copyContainer{
     display: flex;
