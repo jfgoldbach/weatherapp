@@ -145,6 +145,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
         {name: "Amsterdam", lon: 52.370197, lat: 4.890444}])
     const [isfav, setIsFav] = useState(false)
     const [searchavail, setSearchavail] = useState(false)
+    const [searching, setSearching] = useState(false)
 
     const searchField = useRef<HTMLInputElement>()
     const lastSearch = useRef("")
@@ -157,9 +158,13 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
     useEffect(() => {
         const clickListener = document.addEventListener("click", e => {
             if(e.target !== searchField.current){
-                search_recom?.classList.remove("recomendation_active")
+                //search_recom?.classList.remove("recomendation_active")
+                setSearching(false)
+                console.log("inactive")
             } else {
-                search_recom?.classList.add("recomendation_active")
+                //search_recom?.classList.add("recomendation_active")
+                setSearching(true)
+                console.log("active")
             }
         })
     }, [])
@@ -210,8 +215,10 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
 
     const queueRequest = () => {
         if(searchField.current){
+            console.log("request")
             requestLocs()
             lastSearch.current = searchField.current.value
+            search_recom?.classList.add("recomendation_active")
             setSearchavail(false)
             setTimeout(() => {
                 setSearchavail(true)
@@ -285,11 +292,13 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
     const updateSearch = () => {
         if(searchField.current){
             const search = searchField.current.value
+            //request reconmendations whenever the first character is typed, 2 seconds since change have passed or 2 more characters have been typed
             if(search.length === 1 || (searchavail && search.length > 0) || (searchavail && Math.abs(search.length - lastSearch.current.length) >= 2 && search.length > 0)){
                 queueRequest()
             }
             if(search.length === 0){
                 setRecom(undefined)
+                console.log("set undefined")
             }
         }
     }
@@ -305,7 +314,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                     {/*<button className="startSearch" onClick={requestLocs}>
                         <p>🔎</p>
                     </button>*/}
-                    <div id="search_recom" className="recomendation">
+                    <div id="search_recom" className={`recomendation ${searching? "recomendation_active" : ""}`}>
                         {recom &&
                             recom.map(item => <button onClick={() => changePos(item.lat, item.lon, true)}>{`${item.name} (${item.country}${item.state? `, ${item.state}` : ""})`}</button>
                             )
