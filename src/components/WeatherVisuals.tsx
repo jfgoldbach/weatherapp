@@ -15,7 +15,7 @@ function WeatherVisuals({clouds, visibility, main, night}:visualsProps) {
     const [isnight, setIsnight] = useState(false)
 
     const mist = 1-(visibility/10000)
-    const conditions = {
+    const conditions: {[key: string]: number[]} = {
         "none": [0,0],
         "Drizzle": [0.25, 0.15], //day opacity, night opacity
         "Rain": [0.75, 0.4],
@@ -41,15 +41,16 @@ function WeatherVisuals({clouds, visibility, main, night}:visualsProps) {
 
     return(
         <div className={isnight? "background background_night" : "background"}>
-            <div style={{opacity: clouds/100}} className={isnight? "cloudVis cloudVis_night" : "cloudVis"} />
-            <div style={{opacity: conditions[foundCondition.length !== 0? main : "none"][isnight? 1 : 0]}} 
-                className={isnight? (main === "Snow" ? "snowVis" : "rainVis rainVis_night")  :  (main === "Snow" ? "snowVis" : "rainVis")} />
             <div 
                 style={{
-                    opacity: mist*1.5,
-                    backgroundImage: `linear-gradient(rgb(${color},${color},${color}) ${mist*100}%, rgba(${color},${color},${color},${mist}))`
+                    opacity: mist*2,
+                    backgroundImage: `linear-gradient(rgb(${color},${color},${color}) ${(mist)*90}%, rgba(${color},${color},${color},${(mist-0.5)}))`
                 }} 
                 className="mist" />
+            <div style={{opacity: (clouds/100 - (mist*0.65))}} className={isnight? "cloudVis cloudVis_night" : "cloudVis"} />
+            <div style={{opacity: conditions[foundCondition.length !== 0? main : "none"][isnight? 1 : 0]}} 
+                className={isnight? (main === "Snow" ? "snowVis" : "rainVis rainVis_night")  :  (main === "Snow" ? "snowVis" : "rainVis")} />
+            
         </div>
         
     )

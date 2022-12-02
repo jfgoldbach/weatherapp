@@ -123,6 +123,7 @@ type favType = {
     lat: number
 }[]
 
+
 type dashboardProps = {
     setClouds: React.Dispatch<number>
     setVisibility: React.Dispatch<number>
@@ -139,15 +140,12 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
     const [sun, setSun] = useState<sunState>({"set" : undefined, "rise": undefined})
     const [all, setAll] = useState(false)
     const [recom, setRecom] = useState<recomendationType>()
-    const [favs, setFavs] = useState([
-        {name: "Berlin", lon: 52.518611, lat: 13.408333}, 
-        {name:"Hamburg", lon: 53.550556, lat: 9.993333}, 
-        {name: "Amsterdam", lon: 52.370197, lat: 4.890444}])
+    const [favs, setFavs] = useState<favType>([]) //{name: "Berlin", lon: 52.518611, lat: 13.408333}
     const [isfav, setIsFav] = useState(false)
     const [searchavail, setSearchavail] = useState(false)
     const [searching, setSearching] = useState(false)
 
-    const searchField = useRef<HTMLInputElement>()
+    const searchField = useRef<HTMLInputElement>(null)
     const lastSearch = useRef("")
 
     const owID = api.key
@@ -167,6 +165,10 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 console.log("active")
             }
         })
+        const getFavs = localStorage.getItem('favorites');
+        if(getFavs){
+            setFavs(JSON.parse(getFavs))
+        }
     }, [])
 
     useEffect(() => {
@@ -197,7 +199,9 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
 
     useEffect(() => {
         if(weather){
-            setIsFav(favs.filter(fav => fav.name === weather.name).length === 1)
+            if(favs){
+                setIsFav(favs.filter(fav => fav.name === weather.name).length === 1)
+            }
             setClouds(weather?.clouds.all)
             setVisibility(weather?.visibility)
             setMain(weather?.weather[0].main)
@@ -222,7 +226,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             setSearchavail(false)
             setTimeout(() => {
                 setSearchavail(true)
-                if(searchField.current?.value.length !== lastSearch.current.length && searchField.current.value.length > 0){
+                if(searchField.current && searchField.current?.value.length !== lastSearch.current.length && searchField.current.value.length > 0){
                     queueRequest()
                     //console.log(searchField.current?.value.length, lastSearch.current?.length)
                 }
@@ -232,14 +236,12 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
 
     const getLocation = () => {
         if(navigator.geolocation){
-            const geo = navigator.geolocation.getCurrentPosition(setLocation)
+            const geo = navigator.geolocation.getCurrentPosition(location => {
+                setPos([location.coords.latitude, location.coords.longitude])
+                updateTime()
+            })
             //console.log(geo)
         }
-    }
-
-    const setLocation = (location) => {
-        setPos([location.coords.latitude, location.coords.longitude])
-        updateTime()
     }
 
     const updateTime = () => {
@@ -278,7 +280,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
 
     const makeFavorite = () => {
         if(isfav){
-            const newFavs = favs.filter(fav => fav.name !== weather!.name)
+            const newFavs = favs!.filter(fav => fav.name !== weather!.name)
             setFavs(newFavs)
             setIsFav(false)
         } else {
@@ -287,6 +289,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             setFavs(favorites)
             setIsFav(true)
         }
+        localStorage.setItem('favorites', JSON.stringify(favs))
     }
 
     const updateSearch = () => {
