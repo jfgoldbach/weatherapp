@@ -5,10 +5,15 @@
     background-image: linear-gradient(#a8c8ee,#b5d4ef,#e6e2de,#49689e,#506563,#707136,#707136);
     background-image: url("../images/aleksandar-ristov-LAy1DOJbPlw-unsplash.jpg");
     background-size: cover;
+    animation: fadeIn 1s forwards;
 }
 .background_night{
     background-image: linear-gradient(#020b10,#222c35,#424852,#6e8ba7,#534512,#2e2721,#1e1108);
     background-image: url("../images/stefan-widua-iPOZf3tQfHA-unsplash.jpg");
+}
+@keyframes fadeIn {
+    from{opacity: 0};
+    to {opacity: 1};
 }
 
 

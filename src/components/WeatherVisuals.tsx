@@ -13,6 +13,7 @@ type visualsProps = {
 
 function WeatherVisuals({clouds, visibility, main, night}:visualsProps) {
     const [isnight, setIsnight] = useState(false)
+    const [loaded, setloaded] = useState(false)
 
     const mist = 1-(visibility/10000)
     const conditions: {[key: string]: number[]} = {
@@ -37,10 +38,14 @@ function WeatherVisuals({clouds, visibility, main, night}:visualsProps) {
         
     },[night])
 
+    const isLoaded = () => {
+        setloaded(true)
+    }
+
 
 
     return(
-        <div className={isnight? "background background_night" : "background"}>
+        <div className={`${isnight? "background background_night" : "background"}`}>
             <div 
                 style={{
                     opacity: mist*2,

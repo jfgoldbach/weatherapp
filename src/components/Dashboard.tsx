@@ -150,6 +150,9 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
 
     const owID = api.key
 
+    const weatherLoading = weather === undefined && pos !== undefined
+    const fiveLoading = fivedays === undefined && pos !== undefined
+
     const search_recom = document.getElementById("search_recom")
 
     //click outside searchfield to hide results
@@ -199,6 +202,12 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
 
     useEffect(() => {
         if(weather){
+            document.title = `${Math.round(weather.main.temp-273.15)}°C in ${weather.name} - Wetter App`
+            const favicon = document.getElementById("favicon")
+            if(favicon){
+                (favicon as HTMLLinkElement).href = `https://openweathermap.org/img/wn/${weather.weather[0].icon}.png`
+            }
+            
             if(favs){
                 setIsFav(favs.filter(fav => fav.name === weather.name).length === 1)
             }
@@ -267,7 +276,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
 
     const requestLocs = () => {
         //console.log("request")
-        axios.get("http://api.openweathermap.org/geo/1.0/direct", {
+        axios.get("https://api.openweathermap.org/geo/1.0/direct", {
             params: {
                 q: searchField.current?.value,
                 limit: 5,
@@ -317,10 +326,13 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                     {/*<button className="startSearch" onClick={requestLocs}>
                         <p>🔎</p>
                     </button>*/}
-                    <div id="search_recom" className={`recomendation ${searching? "recomendation_active" : ""}`}>
+                    <div id="search_recom" className={`recomendation ${searching && recom ? "recomendation_active" : ""}`}>
                         {recom &&
                             recom.map(item => <button onClick={() => changePos(item.lat, item.lon, true)}>{`${item.name} (${item.country}${item.state? `, ${item.state}` : ""})`}</button>
                             )
+                        }
+                        {recom && recom.length === 0 &&
+                        <p>Keine Ergebnisse</p>
                         }
                     </div>
                 </div>
@@ -328,6 +340,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                     <p>📍</p>
                 </button>
             </div>
+            
             {favs.length > 0 &&
                 <div className="favContainer">
                     <h1>⭐</h1>
@@ -339,8 +352,8 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             
             <div className="heading main">
                 <div className="cityDate">
-                    <h1>{weather? weather.name : <Filler width="200px" height="50px" />}</h1>
-                    <h2>{weather? weather.sys.country : <Filler width="50px" height="30px" />}</h2>
+                    <h1>{weather? weather.name : <Filler loading={weatherLoading} width="200px" height="50px" />}</h1>
+                    <h2>{weather? weather.sys.country : <Filler loading={weatherLoading} width="50px" height="30px" />}</h2>
                         {weather?
                             <div className="clockFavo">
                                 <button className={`${isfav? "favo_active" : ""} favo`} onClick={makeFavorite}>
@@ -355,21 +368,21 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                                 
                             </div>
                             :
-                            <Filler width="150px" height="30px" />    
+                            <Filler loading={weatherLoading} width="150px" height="30px" />    
                         }
                 </div>
-                <h1 className="temp">{weather? Math.round((weather.main.temp-273.15)*10)/10 : <Filler width="100px" height="100px" />}°C</h1>
+                <h1 className="temp">{weather? Math.round((weather.main.temp-273.15)*10)/10 : <Filler loading={weatherLoading} width="100px" height="100px" />}°C</h1>
             </div>
 
             <div className="clouds main">
                 {weather?
-                    <img src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}></img>
+                    <img src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}></img>
                     :
-                    <Filler width="200px" height="125px" />
+                    <Filler loading={weatherLoading} width="200px" height="125px" />
                 }
                 <div className="cloudInfo">
-                    <h2>{weather? weather.weather[0].description : <Filler width="150px" height="40px" margin="10px" />}</h2>
-                    <p className="muted">{weather? `${weather.clouds.all}% bewölkt` : <Filler width="250px" height="35px" />}</p>
+                    <h2>{weather? weather.weather[0].description : <Filler loading={weatherLoading} width="150px" height="40px" margin="10px" />}</h2>
+                    <p className="muted">{weather? `${weather.clouds.all}% bewölkt` : <Filler loading={weatherLoading} width="250px" height="35px" />}</p>
                 </div>
                 
             </div>
@@ -391,13 +404,13 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                                         : null
                                     }
                                     <h2>{`${dateHours} Uhr`}</h2>
-                                    <img src={`http://openweathermap.org/img/wn/${i.weather[0].icon}@2x.png`} />
+                                    <img src={`https://openweathermap.org/img/wn/${i.weather[0].icon}@2x.png`} />
                                     <p>{Math.round((i.main.temp-273.15)*10)/10}°C</p>
                                 </div>
                             )
                         })
                         :
-                        <Filler width="125px" height="125px" />
+                        <Filler loading={fiveLoading} width="125px" height="125px" />
                     }
                 </div>
             </div>
@@ -405,27 +418,49 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             <div className="details">
                 <div className="detailItem">
                     <h1>🤲 Fühlt sich an wie</h1>
-                    <p>{weather? Math.round((weather.main.feels_like-273.15)*10)/10 : <Filler width="60px" height="60px" />}°C</p>
+                    <p>{weather
+                        ? Math.round((weather.main.feels_like-273.15)*10)/10 
+                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
+                        °C
+                    </p>
                 </div>
                 <div className="detailItem">
-                    <h1>💨 Windgeschwindigkeit</h1>
-                    <p>{weather? Math.round(weather.wind.speed*3.6) : <Filler width="60px" height="60px" />} km/h</p>
+                    <h1>💨 Wind&shy;ge&shy;schwin&shy;dig&shy;keit</h1>
+                    <p>{weather
+                        ? Math.round(weather.wind.speed*3.6) 
+                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
+                        km/h
+                    </p>
                 </div>
                 <div className="detailItem">
-                    <h1>💧 Feuchtigkeit</h1>
-                    <p>{weather? weather.main.humidity : <Filler width="60px" height="60px" />}%</p>
+                    <h1>💧 Feucht&shy;ig&shy;keit</h1>
+                    <p>{weather
+                        ? weather.main.humidity 
+                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
+                        %
+                    </p>
                 </div>
                 <div className="detailItem">
-                    <h1>🌇 Sonnenuntergang</h1>
-                    <p>{weather? sun.set : <Filler width="60px" height="60px" />}</p>
+                    <h1>🌇 Sonn&shy;en&shy;un&shy;ter&shy;gang</h1>
+                    <p>{weather
+                        ? sun.set 
+                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
+                    </p>
                 </div>
                 <div className="detailItem">
-                    <h1>🌅 Sonnenaufgang</h1>
-                    <p>{weather? sun.rise : <Filler width="60px" height="60px" />}</p>
+                    <h1>🌅 Sonn&shy;en&shy;auf&shy;gang</h1>
+                    <p>{weather
+                        ? sun.rise 
+                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
+                    </p>
                 </div>
                 <div className="detailItem">
-                    <h1>👀 Sichtweite</h1>
-                    <p>{weather? weather.visibility === 10000 ? "10+" : weather.visibility/1000 : <Filler width="60px" height="60px" />} km</p>
+                    <h1>👀 Sicht&shy;wei&shy;te</h1>
+                    <p>{weather
+                        ? weather.visibility === 10000 ? "10+" : weather.visibility/1000 
+                        : <Filler loading={weatherLoading}  width="60px" height="60px" />} 
+                        km
+                    </p>
                 </div>
             </div>
             {weather?
@@ -487,7 +522,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 <small className="muted">&copy; 2022 Julian Goldbach</small>
                 <div className="copies">
                     <div className="copyContainer">
-                        <p>☀ Wetter</p>
+                        <p>Wetter</p>
                         <span>Daten bereitgestellt von</span>
                         <a href="https://openweathermap.org/" target="_blank">
                             OpenWeather
@@ -495,7 +530,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                         </a>
                     </div>
                     <div className="copyContainer">
-                        <p>🖼 Bilder</p>
+                        <p>Bilder</p>
                         <a href="https://unsplash.com/@aleksandarr09" target="_blank">
                             Aleksandar Ristov
                             <img src="images/newWindow_light.svg" />
