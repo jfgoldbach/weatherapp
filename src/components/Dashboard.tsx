@@ -438,7 +438,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                     condition={weather? true : false} loading={weatherLoading}
                 />
                 <DetailItem 
-                    symbol="👀" title="Sicht&shy;wei&shy;te" value={weather?.visibility === 10000 ? "10+" : weather?.visibility/1000}
+                    symbol="👀" title="Sicht&shy;wei&shy;te" value={weather?.visibility === 10000 ? "10+" : weather!.visibility/1000}
                     unit="km" condition={weather? true : false} loading={weatherLoading}
                 />
             </div>
