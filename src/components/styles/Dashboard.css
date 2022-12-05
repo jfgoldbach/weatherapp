@@ -194,7 +194,6 @@
     background-color: rgba(0, 0, 0, 0.5);
     padding: 16px;
     border-radius: 32px;
-    /*backdrop-filter: blur(12px);*/
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
     border: 1px solid #ddd;
 }
@@ -356,19 +355,15 @@
     border: 1px solid #666;
     transition: 0.15s;
 }
-.refresh p{
-    font-size: 1.33rem;
-    background-color: green;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: fit-content;
-    line-height: 0;
-    flex-grow: 1;
-    transition: 0.2s;
+.refresh img{
+    width: 23px;
+    transition: rotate 1s;
 }
 .refresh:hover{
     background-color: rgba(255,255,255,0.25);
+}
+.refresh:hover img{
+    rotate: -360deg;
 }
 
 .details{
@@ -394,17 +389,32 @@
         -5px -5px 20px rgba(0,0,0,0.4) inset;
     border: 1px solid #555;
 }
-.detailItem h1{
+.detailItem_title{
+    display: flex;
+}
+.detailItem_title h1{
+    font-size: 1rem;
+    color: #555;
+    font-weight: normal;
+}
+.detailItem > h1{
     font-size: 1rem;
     font-weight: 100;
     color: #444;
     /*filt100er: saturate(0) contrast(1.5)*/
 }
-.detailItem p{
+.detailItem_value{
     display: flex;
-    align-items: center;
+    align-items: baseline;
     font-size: 3rem;
     color: #222
+}
+.detailItem_value p{
+    font-size: 2.25rem;
+}
+.detailItem_value h1{
+    font-size: 3rem;
+    font-weight: normal;
 }
 
 
@@ -487,13 +497,30 @@
         padding: 0 7px
     }
     .main{
-        backdrop-filter: blur(20px);
+        backdrop-filter: none;
         flex-direction: column;
         min-width: 50vw;
         max-width: calc(100% - 32px);
+        background-color: rgb(146, 160, 181);
+        border: none;
+        width: 100%;
+        color: #333
     }
     .heading{
+        color: #eee;
         text-align: center;
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        min-width: 100%;
+        text-shadow: 0 0 6px rgba(0, 0, 0, 0.75);
+    }
+    .clouds img{
+        filter: none;
+        /*filter: drop-shadow(0 0 30px rgba(0,0,0,0.65))*/
+    }
+    .heading .cityDate h1{
+        font-size: 3rem;
     }
     .cityDate h1{
         font-size: 2.5rem;
@@ -502,24 +529,38 @@
         font-size: 1.75rem;
     }
     .temp{
-        font-size: 4rem;
+        font-size: 4.5rem;
     }
     .nextDays{
-        width: calc(100% - 32px);
+        width: 100%;
         max-width: none;
+        padding: 0;
+        overflow: hidden;
     }
-    .nextDays h1{
-        margin-top: 5px;
+    .nextDays img{
+        /*filter: drop-shadow(0 0 20px rgba(0,0,0,0.5))*/
+    }
+    .nextDays_heading{
+        margin-top: 22px;
+        margin-left: 12px;
+    }
+    .followingDay{
+        color: #333;
+        border-color: #555;
+        margin: 0;
+    }
+    .forecastList{
+        margin-bottom: 15px;
     }
     .search{
         flex-direction: row;
         width: 90vw
     }
     .search input{
-        font-size: 1.33rem;
+        font-size: 1rem;
     }
     .search input:focus{
-        font-size: 1.33rem;
+        font-size: 1rem;
     }
     .favContainer{
         width: 90vw;
@@ -530,31 +571,44 @@
     .favorites{
         padding: 10px 2px;
         justify-content: center;
-        max-height: 115px;
+        max-height: 80px;
         overflow-y: auto;
-        background-color: rgba(255, 251, 0, 0.5);
-        border: 1px solid rgb(170, 170, 0);
-        backdrop-filter: blur(20px);
-        border-radius: 16px;
     }.favorites button{
-        background-color: white;
+        background-color:rgb(255, 255, 157);
+        padding: 7px 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.125);
     }
     .details{
-        backdrop-filter: blur(20px);
-        width: calc(100% - 20px);
+        backdrop-filter: none;
+        background-color: transparent;
+        box-shadow: none;
+        width: 100%;
         grid-template-columns: calc(50% - 5px) calc(50% - 5px);
         gap: 10px;
+        padding: 0;
     }
     .detailItem{
         padding: 20px 10px;
         display: flex;
         gap: 35px;
+        background-color: rgb(146, 160, 181);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
         flex-direction: column;
         justify-content: space-between;
         border: none;
     }
-    .detailItem h1{
+    .detailItem_title h1{
+        font-size: 1rem;
+    }
+    .detailItem_value > p{
+        font-size: 1rem;
+        margin-left: 5px;
+    }
+    .detailItem_value h1{
+        font-size: 2.75rem;
+        margin: 0;
+    }
+    .detailItem > h1{
         padding: 0;
         margin: 0;
         font-size: 1rem;
@@ -568,30 +622,65 @@
         word-break: break-all;
     }
     .cityDate{
+        width: 100%;
         align-items: center;
     }
     .clockFavo{
-        justify-content: center;
+        width: fit-content;
+        gap: 30px;
+        justify-content: space-between;
+    }
+    .favo,
+    .favo_active{
+        border: none;
+    }
+    .refresh{
+        background-color: rgba(0,0,0,0.25);
+        border: 1px solid #ddd;
+        color: #eee;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.33);
+        --size: 35px;
+    }
+    .refresh img{
+        width: 28px;
+    }
+    .favo p,
+    .favo_active p{
+        font-size: 1.5rem;
+    }
+    .time{
+        font-size: 1.25rem;
     }
     .locate{
         background-color: #333;
     }
     .footer{
         width: calc(100% - 32px);
-    }
-    .clockFavo{
-        justify-content: space-between;
+        background-color: #eee;
     }
     .refreshContainer{
         flex-direction: row-reverse;
     }
     .allInfoContainer{
         width: calc(100% - 20px);
+        backdrop-filter: none;
+        background-color: #111;
+        border: none;
     }
     .allInfoContainer button{
         color: #bbb
     }
     .allInfoContainer button:hover{
         color: #ddd
+    }
+    .copies a{
+        color: #333;
+        text-decoration: underline;
+    }
+    .copies img{
+        display: none;
+    }
+    .muted{
+        color: #666;
     }
 }

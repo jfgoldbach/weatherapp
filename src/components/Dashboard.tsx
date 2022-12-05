@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react"
 import Filler from "./Filler"
 import "./styles/Dashboard.css"
 import api from "./api.json"
+import { DetailItem } from "./DetailItem"
 
 
 type weatherProps = {
@@ -361,9 +362,9 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                                 </button>
                                 <div className="refreshContainer">
                                     <button className="refresh" onClick={() => changePos(weather.coord.lat, weather.coord.lon, false)}>
-                                        <p>⟲</p>
+                                        <img src="images/arrow_circle_light.svg" />
                                     </button>
-                                    <p className="muted">{time}</p>
+                                    <p className="muted time">{time}</p>
                                 </div>
                                 
                             </div>
@@ -388,7 +389,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             </div>
 
             <div className="nextDays main">
-                <h1 style={{fontWeight: "normal", fontSize: "1.25rem"}}>Die nächsten 5 Tage</h1>
+                <h1 className="nextDays_heading" style={{fontWeight: "normal", fontSize: "1.25rem"}}>Die nächsten 5 Tage</h1>
                 <div className="forecastList">
                     {fivedays 
                         ?
@@ -416,52 +417,30 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             </div>
 
             <div className="details">
-                <div className="detailItem">
-                    <h1>🤲 Fühlt sich an wie</h1>
-                    <p>{weather
-                        ? Math.round((weather.main.feels_like-273.15)*10)/10 
-                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
-                        °C
-                    </p>
-                </div>
-                <div className="detailItem">
-                    <h1>💨 Wind&shy;ge&shy;schwin&shy;dig&shy;keit</h1>
-                    <p>{weather
-                        ? Math.round(weather.wind.speed*3.6) 
-                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
-                        km/h
-                    </p>
-                </div>
-                <div className="detailItem">
-                    <h1>💧 Feucht&shy;ig&shy;keit</h1>
-                    <p>{weather
-                        ? weather.main.humidity 
-                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
-                        %
-                    </p>
-                </div>
-                <div className="detailItem">
-                    <h1>🌇 Sonn&shy;en&shy;un&shy;ter&shy;gang</h1>
-                    <p>{weather
-                        ? sun.set 
-                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
-                    </p>
-                </div>
-                <div className="detailItem">
-                    <h1>🌅 Sonn&shy;en&shy;auf&shy;gang</h1>
-                    <p>{weather
-                        ? sun.rise 
-                        : <Filler loading={weatherLoading}  width="60px" height="60px" />}
-                    </p>
-                </div>
-                <div className="detailItem">
-                    <h1>👀 Sicht&shy;wei&shy;te</h1>
-                    <p>{weather
-                        ? weather.visibility === 10000 ? "10+" : weather.visibility/1000 
-                        : <Filler loading={weatherLoading}  width="60px" height="60px" />} 
-                        km
-                    </p>
-                </div>
+                <DetailItem 
+                    symbol="🤲" title="Fühlt sich an wie" value={weather? Math.round((weather.main.feels_like-273.15)*10)/10 : ""}
+                    unit="°C" condition={weather? true : false} loading={weatherLoading}
+                />
+                <DetailItem 
+                    symbol="💨" title="Wind&shy;ge&shy;schwin&shy;dig&shy;keit" value={weather? Math.round(weather.wind.speed*3.6) : ""}
+                    unit="km/h" condition={weather? true : false} loading={weatherLoading}
+                />
+                <DetailItem 
+                    symbol="💧" title="Feucht&shy;ig&shy;keit" value={weather? weather.main.humidity : ""}
+                    unit="%" condition={weather? true : false} loading={weatherLoading}
+                />
+                <DetailItem 
+                    symbol="🌇" title="Sonn&shy;en&shy;un&shy;ter&shy;gang" value={sun.set}
+                    condition={weather? true : false} loading={weatherLoading}
+                />
+                <DetailItem 
+                    symbol="🌅" title=" Sonn&shy;en&shy;auf&shy;gang" value={sun.rise}
+                    condition={weather? true : false} loading={weatherLoading}
+                />
+                <DetailItem 
+                    symbol="👀" title="Sicht&shy;wei&shy;te" value={weather?.visibility === 10000 ? "10+" : weather?.visibility/1000}
+                    unit="km" condition={weather? true : false} loading={weatherLoading}
+                />
             </div>
             {weather?
             <div className={all? "allInfoContainer w-100" : "allInfoContainer"}>
