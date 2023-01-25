@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="42.921932mm"
+   height="43.582863mm"
+   viewBox="0 0 42.921932 43.582863"
+   version="1.1"
+   id="svg2785"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview2787"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false" />
+  <defs
+     id="defs2782" />
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-52.607641,-108.47554)">
+    <path
+       id="rect4047"
+       style="fill:#ffffff;stroke-width:0.264583"
+       d="m 95.529569,108.47555 -18.761645,5.2e-4 6.712769,6.71328 -21.340817,21.34133 5.335075,5.33508 21.341333,-21.34133 6.713285,6.71328 z m -42.921927,6.0663 v 37.51657 h 37.516573 v -19.80654 h -5.030184 v 14.77635 H 57.637826 v -27.4562 h 14.185697 v -5.03018 z"
+       inkscape:export-filename="newWindow_light.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+</svg>
