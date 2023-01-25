@@ -29,6 +29,7 @@ body {
   min-height: 100vh;
   background-attachment: fixed;
   background-size: 100%;
+  background-color: #020b10;
 }
 
 h1 {
@@ -45,11 +46,18 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.2s;
 }
-button:hover {
-  border-color: #646cff;
+input{
+  border: 1px solid transparent;
 }
+@media screen and (min-width: 896px){
+  input:hover,
+  button:hover {
+    border-color: #646cff;
+  }
+}
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;

@@ -1,0 +1,47 @@
+.favoriteButton{
+    display: flex;
+    align-items: center;
+    border: none;
+    padding: 3px;
+    gap: 5px;
+    color: #eee;
+}
+.favoriteButton p{
+    margin: 0;
+    padding: 8px 5px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+.favoriteRemove{
+    color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    height: 100%;
+    width: 30px;
+    font-size: 1.25rem;
+    padding: 0;
+    background-color: transparent;
+    border-left: 1px solid rgba(255,255,255,0.33);
+    border-radius: 0 6px 6px 0;
+}
+
+
+@media screen and (min-width: 896px){
+    .favoriteRemove:hover{
+        border-radius: 6px;
+    }
+    .favoriteButton p:hover{
+        border-color: #646cff;
+    }
+}
+
+@media screen and (max-width: 896px){
+    .favoriteButton{
+        background-color: rgba(43, 46, 49, 0.5);
+        backdrop-filter: blur(7px) contrast(60%) brightness(130%);
+        -webkit-backdrop-filter: blur(7px) contrast(60%) brightness(130%);
+    }
+}

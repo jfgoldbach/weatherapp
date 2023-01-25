@@ -4,133 +4,11 @@ import Filler from "./Filler"
 import "./styles/Dashboard.css"
 import api from "./api.json"
 import { DetailItem } from "./DetailItem"
+import { dashboardProps, weatherProps, fivedaysProps, sunState, recomendationType, favType } from "../assets/types"
+import { useLocalStorage } from "./hooks/useLocalStorage"
+import { FavoriteCard } from "./FavoriteCard"
 
 
-type weatherProps = {
-    coord:{
-        lon: number,
-        lat:number
-    }
-    weather:{
-        id:number,
-        main:string,
-        description:string,
-        icon:string
-    }[]
-    base:string,
-    main:{
-        temp:number,
-        feels_like:number,
-        temp_min:number,
-        temp_max:number,
-        pressure:number,
-        humidity:number
-    }
-    visibility:number,
-    wind:{
-        speed:number,
-        deg:number
-    }
-    clouds:{
-        all:number
-    }
-    dt:number
-    sys:{
-        type:number,
-        id:number,
-        country:string,
-        sunrise:number,
-        sunset:number
-    }
-    timezone:number,
-    id:number,
-    name:string,
-    cod:number
-}
-
-type fivedaysProps = {
-    cod: string
-    message: number
-    cmt: number
-    list: {
-        dt: number
-        main: {
-            temp:number,
-            feels_like:number,
-            temp_min:number,
-            temp_max:number,
-            pressure:number,
-            sea_level: number,
-            grnd_level: number,
-            humidity:number,
-            temp_kf: number
-        }
-        weather: {
-            id: number
-            main: string
-            description: string
-            icon: string
-        }[]
-        clouds: {
-            all: number
-        }
-        wind: {
-            speed: number
-            deg: number
-            gust: number   
-        }
-        visibility: number
-        pop: number
-        sys: {
-            pod: string
-        }
-        dt_txt: string
-    }[]
-    city: {
-        id: number
-        name: string
-        coord: {
-            lat: number
-            lon: number
-        }
-        country: string
-        population: number
-        timezone: number
-        sunrise: number
-        sunset: number
-    }
-}
-
-type sunState = {
-    set: string|undefined
-    rise: string|undefined
-}
-
-type recomendationType = {
-    country: string
-    lon: number
-    lat: number
-    local_names: {
-        en?: string
-        ru?: string
-    }
-    name: string
-    state: string
-}[]
-
-type favType = {
-    name: string
-    lon: number
-    lat: number
-}[]
-
-
-type dashboardProps = {
-    setClouds: React.Dispatch<number>
-    setVisibility: React.Dispatch<number>
-    setMain: React.Dispatch<string>
-    setNight: React.Dispatch<{set: number, rise: number}>
-}
 
 function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps) {
     const [weather, setWeather] = useState<weatherProps>()
@@ -138,6 +16,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
     const [error, setError] = useState("")
     const [pos, setPos] = useState<number[]>()
     const [time, setTime] = useState("")
+    const [pastTime, setPastTime] = useState(0)
     const [sun, setSun] = useState<sunState>({"set" : undefined, "rise": undefined})
     const [all, setAll] = useState(false)
     const [recom, setRecom] = useState<recomendationType>()
@@ -146,8 +25,11 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
     const [searchavail, setSearchavail] = useState(false)
     const [searching, setSearching] = useState(false)
 
+    const [favorites, setFavorites] = useLocalStorage("favorites", [{name: "nowhere", lon: 0, lat: 0}])
+
     const searchField = useRef<HTMLInputElement>(null)
     const lastSearch = useRef("")
+    const timerRef = useRef<number | null>(null)
 
     const owID = api.key
 
@@ -162,18 +44,22 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             if(e.target !== searchField.current){
                 //search_recom?.classList.remove("recomendation_active")
                 setSearching(false)
-                console.log("inactive")
+                //console.log("inactive")
             } else {
                 //search_recom?.classList.add("recomendation_active")
                 setSearching(true)
-                console.log("active")
             }
         })
-        const getFavs = localStorage.getItem('favorites');
-        if(getFavs){
-            setFavs(JSON.parse(getFavs))
-        }
+        //const getFavs = localStorage.getItem('favorites');
+        //if(getFavs){
+        //    setFavs(JSON.parse(getFavs))
+        //}
+        //console.log(favorites)
     }, [])
+
+    //useEffect(() => {
+    //    console.log(favorites)
+    //}, [favorites])
 
     useEffect(() => {
         if(pos !== undefined){
@@ -195,11 +81,15 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 }})
             .then(response => setFivedays(response.data))
             .catch(err => setError(err))
-            //console.log(weather)
-            //console.log(fivedays)
         }
     }
     , [pos])
+
+    useEffect(() => {
+        if(favorites && weather){
+            setIsFav(favorites.filter(fav => fav.name === weather.name).length === 1)
+        }
+    }, [favorites, weather])
 
     useEffect(() => {
         if(weather){
@@ -208,14 +98,9 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             if(favicon){
                 (favicon as HTMLLinkElement).href = `https://openweathermap.org/img/wn/${weather.weather[0].icon}.png`
             }
-            
-            if(favs){
-                setIsFav(favs.filter(fav => fav.name === weather.name).length === 1)
-            }
             setClouds(weather?.clouds.all)
             setVisibility(weather?.visibility)
             setMain(weather?.weather[0].main)
-            //console.log(isfav)
             const sunset = new Date(weather?.sys.sunset*1000)
             const sunsetHours = sunset.getUTCHours().toString()
             const sunsetMinutes = sunset.getUTCMinutes().toString().padStart(2, "0")
@@ -226,6 +111,19 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             setNight({"set": sunset.getUTCHours(), "rise": sunrise.getUTCHours()})
         }
     }, [weather])
+
+    useEffect(() => {
+        if (pastTime > 60 && timerRef.current){
+            clearTimeout(timerRef.current)
+        }
+    }, [pastTime])
+
+    const updatePastTime = () => {
+        timerRef.current = window.setTimeout(() => {
+            setPastTime(prev => prev + 1)
+            updatePastTime()
+        }, 60000);
+    }
 
     const queueRequest = () => {
         if(searchField.current){
@@ -238,7 +136,6 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 setSearchavail(true)
                 if(searchField.current && searchField.current?.value.length !== lastSearch.current.length && searchField.current.value.length > 0){
                     queueRequest()
-                    //console.log(searchField.current?.value.length, lastSearch.current?.length)
                 }
             }, 2000)
         }
@@ -250,7 +147,8 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 setPos([location.coords.latitude, location.coords.longitude])
                 updateTime()
             })
-            //console.log(geo)
+        } else {
+            alert("Ort kann nicht durch geolocation bestimmt werden.")
         }
     }
 
@@ -259,6 +157,11 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
         const hours = date.getHours()
         const minutes = date.getMinutes()
         setTime(`${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`)
+        if(timerRef.current) {
+            window.clearTimeout(timerRef.current)
+        }
+        setPastTime(0)
+        updatePastTime()
     }
 
     const openInfo = () => {
@@ -270,7 +173,6 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
             searchField.current.value = ""
             setRecom(undefined)
         }
-        //console.log([lon, lat])
         updateTime()
         setPos([lon, lat])
     }
@@ -290,16 +192,21 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
 
     const makeFavorite = () => {
         if(isfav){
-            const newFavs = favs!.filter(fav => fav.name !== weather!.name)
-            setFavs(newFavs)
-            setIsFav(false)
+            console.log("remove")
+            const newFavs = favorites!.filter(fav => fav.name !== weather!.name)
+            setFavorites(newFavs)
+            //setIsFav(false)
         } else {
-            let favorites = favs
-            favs.push({name: weather!.name, lat: weather!.coord.lon, lon: weather!.coord.lat})
-            setFavs(favorites)
-            setIsFav(true)
+            let favos = [...favorites, {name: weather!.name, lat: weather!.coord.lon, lon: weather!.coord.lat}]
+            console.log("add", favos)
+            setFavorites(favos)
+            //setIsFav(true)
         }
-        localStorage.setItem('favorites', JSON.stringify(favs))
+    }
+
+    const removeFavorite = (favName: string) => {
+        const newFavs = favorites!.filter(fav => fav.name !== favName)
+        setFavorites(newFavs)
     }
 
     const updateSearch = () => {
@@ -342,29 +249,33 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 </button>
             </div>
             
-            {favs.length > 0 &&
+            {favorites.length > 0 &&
                 <div className="favContainer">
-                    <h1>⭐</h1>
                     <div className="favorites">
-                        {favs.map(fav => <button onClick={() => changePos(fav.lon, fav.lat, false)}>{fav.name}</button>)}
+                        {favorites.map(fav => <FavoriteCard favItem={fav} changePos={changePos} removeFavorite={removeFavorite} />)}
                     </div>
                 </div>
             }
             
             <div className="heading main">
                 <div className="cityDate">
-                    <h1>{weather? weather.name : <Filler loading={weatherLoading} width="200px" height="50px" />}</h1>
-                    <h2>{weather? weather.sys.country : <Filler loading={weatherLoading} width="50px" height="30px" />}</h2>
+                    <h1 title="Ort">{weather? weather.name : <Filler loading={weatherLoading} width="200px" height="50px" />}</h1>
+                    <h2 title="Region">{weather? weather.sys.country : <Filler loading={weatherLoading} width="50px" height="30px" />}</h2>
                         {weather?
                             <div className="clockFavo">
-                                <button className={`${isfav? "favo_active" : ""} favo`} onClick={makeFavorite}>
-                                    <p className={isfav? "star_active": "star_inactive"}>⭐</p>
+                                <button className="star" title={`${weather.name} Favorisieren`} onClick={makeFavorite}>
+                                    <img src={isfav? "/images/star_solid.svg" : "/images/star_outline.svg"}></img>
                                 </button>
                                 <div className="refreshContainer">
-                                    <button className="refresh" onClick={() => changePos(weather.coord.lat, weather.coord.lon, false)}>
+                                    <button className="refresh" title={`Daten für ${weather.name} aktualisieren`} onClick={() => changePos(weather.coord.lat, weather.coord.lon, false)}>
                                         <img src="images/arrow_circle_light.svg" />
                                     </button>
-                                    <p className="muted time">{time}</p>
+                                    {pastTime > 0 &&
+                                        <p className={`muted time`} title={`Zuletzt aktualisiert um ${time} Uhr`}>
+                                            vor {pastTime < 60 ? `${pastTime} min` : "> 1 Std"}
+                                        </p>
+                                    }
+                                    
                                 </div>
                                 
                             </div>
@@ -393,7 +304,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 <div className="forecastList">
                     {fivedays 
                         ?
-                        fivedays.list.map(i => {
+                        fivedays.list.map((i, index) => {
                             const date = new Date(i.dt*1000)
                             const dateHours = date.getUTCHours().toString().padStart(2, "0")
                             const dateDay = date.getUTCDate()
@@ -401,7 +312,11 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                             return(
                                 <div className="forecastItem">
                                     {dateHours === "00" ?
-                                        <h1 className="followingDay">{`${dateDay}.${dateMonth}.`}</h1>
+                                        <h1 className="followingDay">{`${dateDay}.${dateMonth + 1}.`}</h1>
+                                        : null
+                                    }
+                                    {index === 0 && dateHours !== "00" ?
+                                        <h1 className="followingDay">Heute</h1>
                                         : null
                                     }
                                     <h2>{`${dateHours} Uhr`}</h2>
@@ -438,7 +353,7 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                     condition={weather? true : false} loading={weatherLoading}
                 />
                 <DetailItem 
-                    symbol="👀" title="Sicht&shy;wei&shy;te" value={weather?.visibility === 10000 ? "10+" : weather!.visibility/1000}
+                    symbol="👀" title="Sicht&shy;wei&shy;te" value={weather?.visibility === 10000 ? "10+" : weather ? weather.visibility/1000 : ""}
                     unit="km" condition={weather? true : false} loading={weatherLoading}
                 />
             </div>
@@ -447,8 +362,6 @@ function Dashboard({setClouds, setVisibility, setMain, setNight}:dashboardProps)
                 <button onClick={openInfo}>{all? "Informationen einklappen ▲" : "Alle Informationen zum aktuellen Wetter ▼"}</button>
                 {all &&
                     <div>
-                        <h1>Bereitgestellt von OpenWeather</h1>
-                        <br/>
                         <h1>coord</h1>
                         <p>lon: {weather?.coord.lon}</p>
                         <p>lat: {weather?.coord.lat}</p>

@@ -4,7 +4,7 @@ import Dashboard from './components/Dashboard'
 import WeatherVisuals from './components/WeatherVisuals'
 
 function App() {
-  const [clouds, setClouds] = useState(40)
+  const [clouds, setClouds] = useState(100)
   const [visibility, setVisibility] = useState(8000)
   const [main, setMain] = useState("")
   const [night, setNight] = useState({"rise": 6, "set": 18})

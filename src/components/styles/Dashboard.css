@@ -15,12 +15,12 @@
     padding: 0;
     --size: 50px;
     font-size: 1.5rem;
-    background-color: transparent;
-    border: 1px solid #888;
+    background-color: #333;
     border-radius: 16px;
     width: var(--size);
     height: var(--size);
     overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4)
 }
 .locate:hover p{
     animation: locateAnim 1s forwards
@@ -55,9 +55,9 @@
     font-size: 1.25rem;
     font-weight: 100;
     margin: 0;
-    border-radius: 32px;
-    border: 1px solid rgb(221, 221, 127);
-    background-color: rgba(250, 212, 109, 0.15);
+    border-radius: 50% 8px 8px 50%;
+    border: 1px solid #eee;
+    background-color: rgba(0, 0, 0, 0.25);
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
     cursor: default;
 }
@@ -68,26 +68,23 @@
     justify-content: flex-start;
     gap: 10px;
 }
-.favorites button{
-    background-color: rgb(255, 236, 115);
-    color: #333;
+/*.favorites button{
+    background-color: rgba(0, 0, 0, 0.25);
+    border: 1px solid #eee;
+    color: #eee;
     display: flex;
     gap: 10px;
     align-items: center;
-    border-width: 2px;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
     animation: favIn 0.33s
-}
+}*/
 @keyframes favIn {
     from{scale: 0.2;}
     to {scale: 1}
 }
-.favorites button:hover{
-    border-width: 2px;
-}
-.favorites button p{
+/*.favorites button p{
     margin: 0;
-}
+}*/
 
 
 .search{
@@ -98,6 +95,9 @@
 .searching{
     position: relative;
     flex-grow: 1;
+}
+.searching input{
+    z-index: 250 !important
 }
 .startSearch{
     position: absolute;
@@ -136,7 +136,7 @@
     top: 50%;
     width: 100%;
     min-height: 10px;
-    z-index: 1;
+    z-index: 200;
     background-color: #ddd;
     border-bottom-right-radius: 16px;
     border-bottom-left-radius: 16px;
@@ -176,11 +176,11 @@
     position: absolute;
     z-index: 2;
     border-radius: 32px;
-    border: none;
-    border: 1px solid #555;
     padding: 0 15px;
     height: 100%;
-    transition: font-size 0.2s;
+    background-color: #333;
+    transition: 0.2s;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4)
 }
 .search input:focus{
     font-size: 1.125rem;
@@ -191,11 +191,10 @@
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 16px;
     border-radius: 32px;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
-    border: 1px solid #ddd;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.65);
 }
 
 
@@ -229,6 +228,7 @@
     flex-direction: column;
     align-items: flex-start;
     max-width: 100%;
+    gap: 0px
 }
 .nextDays h1{
     font-size: 1.5rem;
@@ -270,6 +270,10 @@
 
 .heading{
     margin-top: 25px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px)
 }
 
 .muted{
@@ -322,27 +326,22 @@
     border: 1px solid #666;
     transition: 0.15s;
 }
-.star_active{
-    transform: translateY(-1px);
-    font-size: 1.125rem;
-    filter: none;
-    opacity: 1
+
+.star img{
+    width: 23px;
 }
+
 .favo:hover{
     background-color: rgba(255,255,255,0.25)
 }
-.star_inactive{
-    transform: translateY(-1px);
-    font-size: 1.125rem;
-    opacity: 0.65;
-    filter: saturate(0) contrast(2)
-}
+
 
 .refreshContainer{
     display: flex;
     align-items: center;
     gap: 5px;
 }
+.star,
 .refresh{
     --size: 30px;
     width: var(--size);
@@ -366,31 +365,45 @@
     rotate: -360deg;
 }
 
+@keyframes timeInDesktop {
+    from{opacity: 0}
+    to{opacity: 1}
+}
+.time{
+    animation: timeInDesktop 1s forwards;
+    cursor: default;
+}
+.time.visible{
+    opacity: 1;
+}
+
 .details{
     display: grid;
     grid-template-columns: auto auto auto;
     gap: 25px;
     margin-top: 50px;
-    background-color: rgba(0, 0, 0, 0.5);
+    /*background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(12px);
     padding: 10px;
     border-radius: 32px;
-    /*border: 1px solid #888;*/
-    box-shadow: 
-        0 0 30px rgba(0, 0, 0, 0.33);
+    border: 1px solid #888;*/
 }
 .detailItem{
-    background-color: rgba(255,255,255,0.65);
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(230,230,230,0.65);
     padding: 16px;
     border-radius: 26px;
-    box-shadow: 
+    /*box-shadow: 
         0 0 50px rgba(0,0,0,0.125),
         5px 5px 20px rgba(255,255,255,0.75) inset,
         -5px -5px 20px rgba(0,0,0,0.4) inset;
-    border: 1px solid #555;
+    border: 1px solid #555;*/
+    gap: 28px;
 }
 .detailItem_title{
     display: flex;
+    gap: 3px;
 }
 .detailItem_title h1{
     font-size: 1rem;
@@ -405,9 +418,13 @@
 }
 .detailItem_value{
     display: flex;
+    /*padding-top: 28px;*/
     align-items: baseline;
     font-size: 3rem;
-    color: #222
+    color: #222;
+}
+.detailItem_value *{
+    margin: 0;
 }
 .detailItem_value p{
     font-size: 2.25rem;
@@ -419,17 +436,20 @@
 
 
 .allInfoContainer{
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: #333;
     padding: 10px;
     border-radius: 32px;
-    border: 1px solid #aaa;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     width: 50%;
     margin: 50px auto;
     display: flex;
     flex-direction: column;
-    transition: width 0.33s;
+    transition: 0.33s;
     text-align: center;
+    border: 1px solid transparent
+}
+.allInfoContainer:hover{
+    border-color: #646cff;
 }
 .w-100{
     width: calc(100% - 20px);
@@ -483,8 +503,11 @@
 }
 
 @media screen and (max-width: 896px) {
+    *{
+        backdrop-filter: none;
+    }
     .weatherContainer{
-        backdrop-filter: unset;
+        backdrop-filter: none;
         background-color: transparent;
         z-index: 10;
         display: flex;
@@ -497,23 +520,32 @@
         padding: 0 7px
     }
     .main{
-        backdrop-filter: none;
         flex-direction: column;
         min-width: 50vw;
         max-width: calc(100% - 32px);
-        background-color: rgb(146, 160, 181);
+        background-color: rgba(150, 157, 168, 0.5);
+        backdrop-filter: blur(7px) contrast(60%) brightness(130%);
+        -webkit-backdrop-filter: blur(7px) contrast(60%) brightness(130%);
         border: none;
         width: 100%;
-        color: #333
+        color: #333;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
     .heading{
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
         color: #eee;
+        margin-top: 0;
+        padding: 5px;
+        margin-top: 5px;
         text-align: center;
         background-color: transparent;
         border: none;
         box-shadow: none;
         min-width: 100%;
-        text-shadow: 0 0 6px rgba(0, 0, 0, 0.75);
+        text-shadow: 
+            0 0 8px rgba(0, 0, 0, 0.8),
+            0 0 20px rgba(0, 0, 0, 0.8);
     }
     .clouds img{
         filter: none;
@@ -522,11 +554,16 @@
     .heading .cityDate h1{
         font-size: 3rem;
     }
+    .cityDate p{
+        color: unset;
+    }
     .cityDate h1{
         font-size: 2.5rem;
     }
     .cityDate h2{
         font-size: 1.75rem;
+        color: #ddd;
+        font-weight: 600;
     }
     .temp{
         font-size: 4.5rem;
@@ -534,6 +571,7 @@
     .nextDays{
         width: 100%;
         max-width: none;
+        gap: 10px;
         padding: 0;
         overflow: hidden;
     }
@@ -550,6 +588,8 @@
         margin: 0;
     }
     .forecastList{
+        width: calc(100% - 10px);
+        margin: 0 10px;
         margin-bottom: 15px;
     }
     .search{
@@ -564,6 +604,7 @@
     }
     .favContainer{
         width: 90vw;
+        margin-top: 5px;
     }
     .favContainer h1{
         display: none;
@@ -573,11 +614,11 @@
         justify-content: center;
         max-height: 80px;
         overflow-y: auto;
-    }.favorites button{
-        background-color:rgb(255, 255, 157);
+    }
+    /*.favorites button{
         padding: 7px 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.125);
-    }
+    }*/
     .details{
         backdrop-filter: none;
         background-color: transparent;
@@ -590,8 +631,9 @@
     .detailItem{
         padding: 20px 10px;
         display: flex;
-        gap: 35px;
-        background-color: rgb(146, 160, 181);
+        backdrop-filter: blur(7px) contrast(60%) brightness(130%);
+        -webkit-backdrop-filter: blur(7px) contrast(60%) brightness(130%);
+        background-color: rgba(146, 160, 181, 0.5);
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.33);
         flex-direction: column;
         justify-content: space-between;
@@ -624,42 +666,69 @@
     .cityDate{
         width: 100%;
         align-items: center;
+        flex-direction: column-reverse;
     }
     .clockFavo{
         width: fit-content;
-        gap: 30px;
+        transition: 1s;
+        /*gap: 30px;*/
+        margin-bottom: 10px;
+        gap: 15px;
         justify-content: space-between;
+        background-color: rgba(198, 210, 225, 0.33);
+        backdrop-filter: blur(7px) contrast(60%) brightness(130%);
+        -webkit-backdrop-filter: blur(7px) contrast(60%) brightness(130%);
+        border-radius: 8px;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.45);
     }
-    .favo,
-    .favo_active{
-        border: none;
-    }
+    .star,
     .refresh{
-        background-color: rgba(0,0,0,0.25);
-        border: 1px solid #ddd;
+        background-color: transparent;
+        border: 1px solid transparent;
         color: #eee;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.33);
+        /*--shadow: 0 0 5px rgba(0,0,0, 0.5);
+        filter: drop-shadow(var(--shadow));
+        -webkit-filter: drop-shadow(var(--shadow));*/
         --size: 35px;
+    }
+    .star img{
+        filter: invert(1);
     }
     .refresh img{
         width: 28px;
+        filter: invert(1);
     }
     .favo p,
     .favo_active p{
         font-size: 1.5rem;
     }
+    @keyframes timeIn {
+        from{width: 0}
+        to{width: 90px}
+    }
     .time{
-        font-size: 1.25rem;
+        animation: timeIn 1s forwards;
+        white-space: nowrap;
+        text-align: center;
+        overflow: hidden;
+        font-size: 1.1rem;
+        text-shadow: none;
     }
     .locate{
         background-color: #333;
     }
     .footer{
         width: calc(100% - 32px);
-        background-color: #eee;
+        width: 100%;
+        border-radius: 0;
+        margin-bottom: 0;
+        max-width: unset;
+        background-color: #ddd;
     }
     .refreshContainer{
         flex-direction: row-reverse;
+        gap: 15px;
+        color: #333;
     }
     .allInfoContainer{
         width: calc(100% - 20px);
